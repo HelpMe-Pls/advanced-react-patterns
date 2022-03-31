@@ -20,7 +20,7 @@ test('can also toggle with the custom button', () => {
 })
 
 // 💯 remove the `.skip` if you're working on the extra credit
-test.skip('passes custom props to the custom-button', () => {
+test('passes custom props to the custom-button', () => {
 	const {toggleButton} = renderToggle(<App />)
 	const customButton = screen.getByLabelText('custom-button')
 	expect(customButton.getAttribute('id')).toBe('custom-button-id')
