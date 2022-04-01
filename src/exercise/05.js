@@ -42,6 +42,7 @@ function useToggle({initialOn = false, reducer = toggleReducer} = {}) {
 	const toggle = () => dispatch({type: actionTypes.toggle})
 	const reset = () => dispatch({type: actionTypes.reset, initialState})
 
+	// in case this function is called without arguments, return 'aria-pressed' and onClick: toggle
 	function getTogglerProps({onClick, ...props} = {}) {
 		return {
 			'aria-pressed': on,
