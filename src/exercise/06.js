@@ -34,15 +34,23 @@ function useToggle({
 	// 🐨 add an `onChange` prop.
 	// 🐨 add an `on` option here
 	// 💰 you can alias it to `controlledOn` to avoid "variable shadowing."
+	onChange,
+	// on: controlledOn,
+	isOn,
 } = {}) {
 	const {current: initialState} = React.useRef({on: initialOn})
 	const [state, dispatch] = React.useReducer(reducer, initialState)
-	// 🐨 determine whether on is controlled and assign that to `onIsControlled`
-	// 💰 `controlledOn != null`
+	// Use `controlledOn` instead of `isOn` if you decided to use the <Toggle/> with `on` prop. We're using `isOn` prop so that's how it goes
 
-	// 🐨 Replace the next line with assigning `on` to `controlledOn` if
+	// 🐨 determine whether the `on` property of the state is controlled (i.e. `isOn` prop is passed to <Toggle/>) by assign that to `onIsControlled`
+	// 💰  `== null` is true for `null` and `undefined`
+	// therefore, `isOn != null` means if `isOn` is not `null` OR `undefined`
+	const onIsControlled = isOn != null
+
+	// 🐨 Replace the next line with assigning`on` to `controlledOn` if
 	// `onIsControlled`, otherwise, it should be `state.on`.
-	const {on} = state
+	// const {on} = state
+	const on = onIsControlled ? isOn : state.on
 
 	// We want to call `onChange` any time we need to make a state change, but we
 	// only want to call `dispatch` if `!onIsControlled` (otherwise we could get
@@ -62,15 +70,24 @@ function useToggle({
 	// calculate the changes based on the `action` we have here? That's right!
 	// The reducer! So if we pass it the current state and the action, then it
 	// should return these "suggested changes!"
-	//
-	// 💰 Sorry if Olivia the Owl is cryptic. Here's what you need to do for that onChange call:
-	// `onChange(reducer({...state, on}, action), action)`
-	// 💰 Also note that user's don't *have* to pass an `onChange` prop (it's not required)
-	// so keep that in mind when you call it! How could you avoid calling it if it's not passed?
+
+	// 💰 Also note that users don't *have* to pass an `onChange` prop (it's not required)
+	// so keep that in mind when you call it! How could you avoid calling it if it's not passed? By using `?.` we can avoid the "TypeError: onChange is not a function" if we don't pass `onChange` prop when we use the <Toggle/>
+	const dispatchWithOnChange = action => {
+		// if we don't check `if (!onIsControlled)` and just straight up call `dispatch(action)` then it would trigger unnecessary re-renders of our controlled <Toggle/>
+		if (!onIsControlled) dispatch(action)
+
+		// {...state,on} creates a new state shape with the "controlled" properties (in this case, the `on` property, which could either be `on: bothOn` or just the default `on: state.on` if the <Toggle/> is "uncontrolled")
+		const newState = reducer({...state, on}, action)
+		onChange?.(newState, action)
+	}
 
 	// make these call `dispatchWithOnChange` instead
-	const toggle = () => dispatch({type: actionTypes.toggle})
-	const reset = () => dispatch({type: actionTypes.reset, initialState})
+	// const toggle = () => dispatch({type: actionTypes.toggle})
+	// const reset = () => dispatch({type: actionTypes.reset, initialState})
+	const toggle = () => dispatchWithOnChange({type: actionTypes.toggle})
+	const reset = () =>
+		dispatchWithOnChange({type: actionTypes.reset, initialState})
 
 	function getTogglerProps({onClick, ...props} = {}) {
 		return {
@@ -96,8 +113,8 @@ function useToggle({
 	}
 }
 
-function Toggle({on: controlledOn, onChange}) {
-	const {on, getTogglerProps} = useToggle({on: controlledOn, onChange})
+function Toggle({isOn, onChange}) {
+	const {on, getTogglerProps} = useToggle({isOn, onChange})
 	const props = getTogglerProps({on})
 	return <Switch {...props} />
 }
@@ -106,12 +123,13 @@ function App() {
 	const [bothOn, setBothOn] = React.useState(false)
 	const [timesClicked, setTimesClicked] = React.useState(0)
 
+	// `state` here is now the `newState` in the `dispatchWithOnChange` function from the `useToggle` hook
 	function handleToggleChange(state, action) {
 		if (action.type === actionTypes.toggle && timesClicked > 4) {
 			return
 		}
 		setBothOn(state.on)
-		setTimesClicked(c => c + 1)
+		setTimesClicked(count => count + 1)
 	}
 
 	function handleResetClick() {
@@ -119,11 +137,18 @@ function App() {
 		setTimesClicked(0)
 	}
 
+	// uncontrolled `on` is handled by the default `state.on`
+
 	return (
 		<div>
 			<div>
-				<Toggle on={bothOn} onChange={handleToggleChange} />
-				<Toggle on={bothOn} onChange={handleToggleChange} />
+				{/* the state is now has a controlled `on` prop: 
+				state = {
+					on: bothOn
+				}
+				*/}
+				<Toggle isOn={bothOn} onChange={handleToggleChange} />
+				<Toggle isOn={bothOn} onChange={handleToggleChange} />
 			</div>
 			{timesClicked > 4 ? (
 				<div data-testid="notice">
@@ -138,6 +163,11 @@ function App() {
 			<div>
 				<div>Uncontrolled Toggle:</div>
 				<Toggle
+					// Uncontrolled `on` property of the state, i.e:
+					// state = {
+					//		on: true | false (initialized by the `initialState` from the `useToggle` hook definition)
+					// }
+					// `...arg` is the `state` and `action`
 					onChange={(...args) =>
 						console.info('Uncontrolled Toggle onChange', ...args)
 					}
