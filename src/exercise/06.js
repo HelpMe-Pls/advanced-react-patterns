@@ -68,9 +68,12 @@ function useToggle({
 } = {}) {
 	const {current: initialState} = React.useRef({on: initialOn})
 	const [state, dispatch] = React.useReducer(reducer, initialState)
-	useControlledSwitchWarning({isOn, onChange, readOnly})
-	// Use `controlledOn` instead of `isOn` if you decided to use the <Toggle/> with `on` prop. We're using `isOn` prop so that's how it goes
+	if (process.env.NODE_ENV !== 'production')
+		// `process.env.NODE_ENV` is guaranteed to NEVER change during the lifetime of the app when it's deployed, therefore, it's OK to:
+		// eslint-disable-next-line react-hooks/rules-of-hooks
+		useControlledSwitchWarning({isOn, onChange, readOnly})
 
+	// Use `controlledOn` instead of `isOn` if you decided to use the <Toggle/> with `on` prop. We're using `isOn` prop so that's how it goes
 	// 🐨 determine whether the `on` property of the state is controlled (i.e. `isOn` prop is passed to <Toggle/>) by assign that to `onIsControlled`
 	// 💰  `== null` is true for `null` and `undefined`
 	// therefore, `isOn != null` means if `isOn` is not `null` OR `undefined`
