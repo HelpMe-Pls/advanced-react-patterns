@@ -157,7 +157,7 @@ function App() {
 					on: bothOn
 				}
 				*/}
-				<Toggle isOn={bothOn} onChange={handleToggleChange} />
+				<Toggle isOn={bothOn} readOnly={false} />
 				<Toggle isOn={bothOn} onChange={handleToggleChange} />
 			</div>
 			{timesClicked > 4 ? (
