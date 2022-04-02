@@ -3,7 +3,7 @@
 
 import * as React from 'react'
 import {Switch} from '../switch'
-import warning from 'warning'
+import warning from 'warning' // implementation: warning(false, 'Log this')
 
 const callAll =
 	(...fns) =>
@@ -47,10 +47,24 @@ function useToggle({
 	// therefore, `isOn != null` means if `isOn` is not `null` OR `undefined`
 	const onIsControlled = isOn != null
 
+	// Logs a warning for when the user changes from controlled to uncontrolled or vice-versa
+	// To see how this works at 01:10 from https://epicreact.dev/modules/advanced-react-patterns/control-props-extra-credit-solution-2
+	const {current: onWasControlled} = React.useRef(onIsControlled)
+	React.useEffect(() => {
+		warning(
+			!(!onWasControlled && onIsControlled),
+			`\`useToggle\` is changing from uncontrolled to be controlled. Components should not switch from uncontrolled to controlled (or vice versa). Decide between using a controlled or uncontrolled \`useToggle\` for the lifetime of the component. Check the \`on\` prop.`,
+		)
+		warning(
+			!(onWasControlled && !onIsControlled),
+			`\`useToggle\` is changing from controlled to be uncontrolled. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled \`useToggle\` for the lifetime of the component. Check the \`on\` prop.`,
+		)
+	}, [onIsControlled, onWasControlled])
+
 	// Passing `isOn` without `onChange`:
+	// To see how this works at 03:20 from https://epicreact.dev/modules/advanced-react-patterns/control-props-extra-credit-solution-1
 	const hasOnChange = !!onChange
 	React.useEffect(() => {
-		// implementation: warning(false, 'Log this')
 		warning(
 			!(!hasOnChange && onIsControlled && !readOnly),
 			`An \`on\` prop was provided to useToggle without an \`onChange\` handler. This will render a read-only toggle. If you want it to be mutable, use \`initialOn\`. Otherwise, set either \`onChange\` or \`readOnly\`.`,
@@ -147,8 +161,6 @@ function App() {
 		setTimesClicked(0)
 	}
 
-	// uncontrolled `on` is handled by the default `state.on`
-
 	return (
 		<div>
 			<div>
@@ -157,7 +169,7 @@ function App() {
 					on: bothOn
 				}
 				*/}
-				<Toggle isOn={bothOn} readOnly={false} />
+				<Toggle isOn={bothOn} onChange={handleToggleChange} />
 				<Toggle isOn={bothOn} onChange={handleToggleChange} />
 			</div>
 			{timesClicked > 4 ? (
@@ -173,6 +185,7 @@ function App() {
 			<div>
 				<div>Uncontrolled Toggle:</div>
 				<Toggle
+					// uncontrolled `on` is handled by the default `state.on`
 					// Uncontrolled `on` property of the state, i.e:
 					// state = {
 					//		on: true | false (initialized by the `initialState` from the `useToggle` hook definition)

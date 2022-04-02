@@ -14,7 +14,7 @@ afterEach(() => {
 })
 
 test('warning for controlled component without onChange', () => {
-	render(<Toggle on={false} />)
+	render(<Toggle isOn={false} />)
 	alfredTip(
 		() =>
 			expect(console.error).toHaveBeenCalledWith(
@@ -40,12 +40,12 @@ test('warning for controlled component without onChange', () => {
 })
 
 test('no warning for controlled component with onChange prop', () => {
-	render(<Toggle on={false} onChange={() => {}} />)
+	render(<Toggle isOn={false} onChange={() => {}} />)
 	expect(console.error).toHaveBeenCalledTimes(0)
 })
 
 test('no warning for controlled component with readOnly prop', () => {
-	render(<Toggle on={false} readOnly={true} />)
+	render(<Toggle isOn={false} readOnly={true} />)
 	alfredTip(
 		() => expect(console.error).toHaveBeenCalledTimes(0),
 		'Make sure you forward the readOnly prop to the hook',
@@ -55,7 +55,7 @@ test('no warning for controlled component with readOnly prop', () => {
 test('warning for changing from controlled to uncontrolled', () => {
 	function Example() {
 		const [state, setState] = React.useState(true)
-		return <Toggle on={state} onChange={() => setState(undefined)} />
+		return <Toggle isOn={state} onChange={() => setState(undefined)} />
 	}
 	render(<Example />)
 	userEvent.click(screen.getByLabelText(/toggle/i))
@@ -71,7 +71,7 @@ test('warning for changing from controlled to uncontrolled', () => {
 test('warning for changing from uncontrolled to controlled', () => {
 	function Example() {
 		const [state, setState] = React.useState(undefined)
-		return <Toggle on={state} onChange={() => setState(true)} />
+		return <Toggle isOn={state} onChange={() => setState(true)} />
 	}
 	render(<Example />)
 	userEvent.click(screen.getByLabelText(/toggle/i))
