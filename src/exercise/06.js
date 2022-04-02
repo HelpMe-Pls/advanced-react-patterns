@@ -29,24 +29,9 @@ function toggleReducer(state, {type, initialState}) {
 	}
 }
 
-function useToggle({
-	initialOn = false,
-	reducer = toggleReducer,
-	readOnly = false,
-	// 💰 you can alias it to `controlledOn` to avoid "variable shadowing."
-	// on: controlledOn,
-	isOn,
-	onChange,
-} = {}) {
-	const {current: initialState} = React.useRef({on: initialOn})
-	const [state, dispatch] = React.useReducer(reducer, initialState)
-	// Use `controlledOn` instead of `isOn` if you decided to use the <Toggle/> with `on` prop. We're using `isOn` prop so that's how it goes
-
-	// 🐨 determine whether the `on` property of the state is controlled (i.e. `isOn` prop is passed to <Toggle/>) by assign that to `onIsControlled`
-	// 💰  `== null` is true for `null` and `undefined`
-	// therefore, `isOn != null` means if `isOn` is not `null` OR `undefined`
+// For an IDEAL & GENERIC implementation, checkout `final\06.extra-3.js`
+function useControlledSwitchWarning({isOn, onChange, readOnly = false}) {
 	const onIsControlled = isOn != null
-
 	// Logs a warning for when the user changes from controlled to uncontrolled or vice-versa
 	// To see how this works at 01:10 from https://epicreact.dev/modules/advanced-react-patterns/control-props-extra-credit-solution-2
 	const {current: onWasControlled} = React.useRef(onIsControlled)
@@ -70,6 +55,26 @@ function useToggle({
 			`An \`on\` prop was provided to useToggle without an \`onChange\` handler. This will render a read-only toggle. If you want it to be mutable, use \`initialOn\`. Otherwise, set either \`onChange\` or \`readOnly\`.`,
 		)
 	}, [hasOnChange, onIsControlled, readOnly])
+}
+
+function useToggle({
+	initialOn = false,
+	reducer = toggleReducer,
+	// 💰 you can alias it to `controlledOn` to avoid "variable shadowing."
+	// on: controlledOn,
+	readOnly = false,
+	isOn,
+	onChange,
+} = {}) {
+	const {current: initialState} = React.useRef({on: initialOn})
+	const [state, dispatch] = React.useReducer(reducer, initialState)
+	useControlledSwitchWarning({isOn, onChange, readOnly})
+	// Use `controlledOn` instead of `isOn` if you decided to use the <Toggle/> with `on` prop. We're using `isOn` prop so that's how it goes
+
+	// 🐨 determine whether the `on` property of the state is controlled (i.e. `isOn` prop is passed to <Toggle/>) by assign that to `onIsControlled`
+	// 💰  `== null` is true for `null` and `undefined`
+	// therefore, `isOn != null` means if `isOn` is not `null` OR `undefined`
+	const onIsControlled = isOn != null
 
 	// 🐨 Replace the next line with assigning `on` to `isOn` if
 	// `onIsControlled`, otherwise, it should be `state.on`.
