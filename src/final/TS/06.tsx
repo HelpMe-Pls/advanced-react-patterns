@@ -36,7 +36,7 @@ function useToggle({
 	onChange?: (state: ToggleState, action: ToggleAction) => void
 	on?: boolean
 } = {}) {
-	// Adding a generic <ToggleState> to `useRef` to explicitly set its return value
+	// Adding a generic <ToggleState> to `useRef` to explicitly set its param's type
 	const {current: initialState} = React.useRef<ToggleState>({on: initialOn})
 	const [state, dispatch] = React.useReducer(reducer, initialState)
 	const onIsControlled = controlledOn != null
@@ -64,6 +64,7 @@ function useToggle({
 	}
 
 	// A generic <Props> means that it'll evaluates to whatever type the `...props` are
+	// If you didn't declare the generic then it wouldn't know what's that `Props` from the ` & Props` is
 	function getResetterProps<Props>({
 		onClick,
 		...props
