@@ -3,14 +3,14 @@
 -------------
 
 ## Latest Ref
-- Is used to solve typical asynchronous bugs when implementing class-based React (e.g: Imagine, you start the async thing, then props change while that is in flight, when your code continues you'll have the **latest** values of `this.props` rather than the values that existed at the time the function started running). [Read more](https://epicreact.dev/how-react-uses-closures-to-avoid-bugs/)
+- Is used to **intentionally replicate** an old default feature of class-based React (which *may cause* typical asynchronous bugs in some cases). E.g: Imagine, you start the async thing, then props change while that is in flight, when your code continues you'll have the **latest** values of `this.props` rather than the values that **existed** at the time the function started running. [Read more](https://epicreact.dev/how-react-uses-closures-to-avoid-bugs/)
 
 ## Context Module Functions
 - SoC and enhancing reusability, more details [at 02:20](https://epicreact.dev/modules/advanced-react-patterns/context-module-functions-solution)
 - Typical use cases [at 03:25](https://epicreact.dev/modules/advanced-react-patterns/context-module-functions-solution)
 
 ## Layout Component 
-- Design a component's props to [mimic the UI's layout](https://github.com/HelpMe-Pls/advanced-react-patterns/blob/extra/src/final/TS/02.tsx) to be more declarative. [Read more](https://epicreact.dev/one-react-mistake-thats-slowing-you-down/)
+- Design a component's props and their expressions to [mimic the UI's layout](https://github.com/HelpMe-Pls/advanced-react-patterns/blob/extra/src/final/TS/02.tsx) to be more declarative. [Read more](https://epicreact.dev/one-react-mistake-thats-slowing-you-down/)
 
 ## Compound Component
 - Abstracting away the state management of child components to their parent using `React.Children` and `React.cloneElement`

@@ -20,7 +20,7 @@ function useDebounce<Callback extends (...args: Array<unknown>) => unknown>(
 	delay: number,
 ) {
 	const callbackRef = React.useRef(callback)
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		callbackRef.current = callback
 	})
 	return React.useMemo(
