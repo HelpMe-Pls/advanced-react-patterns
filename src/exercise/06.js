@@ -29,7 +29,7 @@ function toggleReducer(state, {type, initialState}) {
 	}
 }
 
-// For an IDEAL & GENERIC implementation, checkout `final\06.extra-3.js`
+// For an IDEAL & GENERIC implementation, checkout `final/TS/06.tsx`
 function useControlledSwitchWarning({isOn, onChange, readOnly = false}) {
 	const onIsControlled = isOn != null
 	// Logs a warning for when the user changes from controlled to uncontrolled or vice-versa
