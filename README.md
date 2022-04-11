@@ -1,6 +1,6 @@
 # What I've learnt
 
-##### [An intro to design patterns](https://kentcdodds.com/blog/aha-programming)
+#### An [intro](https://kentcdodds.com/blog/aha-programming) to design patterns in general
 ###### *For more details, see `src/exercise/*.md` files*
 -------------
 
