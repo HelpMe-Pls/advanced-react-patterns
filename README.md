@@ -1,7 +1,7 @@
 # What I've learnt
 
 #### An [intro](https://kentcdodds.com/blog/aha-programming) to design patterns in general
-###### *For more details, see `src/exercise/*.md` files*
+###### *For more details, see [`src/exercise/*.md`](https://github.com/HelpMe-Pls/advanced-react-patterns/tree/master/src/exercise) files*
 -------------
 
 ## Latest Ref
