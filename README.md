@@ -1,6 +1,6 @@
 # What I've learnt
 
-#### An [intro](https://kentcdodds.com/blog/aha-programming) to design patterns in general (suggests that you should "prefer duplication over the wrong abstraction" and "optimize for change first").
+#### An [intro](https://kentcdodds.com/blog/aha-programming) to design patterns in general (which suggests "prefer duplication over the wrong abstraction" and "optimize for change first").
 ###### *For more details, see [`src/exercise/*.md`](https://github.com/HelpMe-Pls/advanced-react-patterns/tree/master/src/exercise) files*
 -------------
 
