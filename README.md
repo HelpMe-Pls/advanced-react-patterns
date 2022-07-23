@@ -5,7 +5,28 @@
 -------------
 
 ## Latest Ref
-- Is used to **intentionally replicate** an old default feature of class-based React (which *may cause* typical asynchronous bugs in some cases). E.g: Imagine, you start the async thing, then props change while that is in flight, when your code continues you'll have the **latest** values of `this.props` rather than the values that **existed** at the time the function started running. [Read more](https://epicreact.dev/how-react-uses-closures-to-avoid-bugs/).
+- This pattern allows you to access the *latest* value of a prop, state, or a callback without needing to list it in the dependency array. It's an **intentional replicate** of an old default feature of class-based React (which ***may cause*** typical asynchronous bugs in some cases, e.g: Imagine, you start the async thing, then props change while that is in flight, when your code continues you'll have the **latest** values of `this.props` rather than what you want: the values that **existed** at the time the function started running [adheres to its closure](https://epicreact.dev/how-react-uses-closures-to-avoid-bugs/)):
+
+```js
+function useExampleOne(callback) {
+  React.useEffect(() => {
+    callback()
+  }, [callback]) // <-- have to include the callback in the dep array
+}
+
+function useExampleTwo(callback) {
+  const {current: latestCallbackRef} = React.useRef(callback)
+
+  React.useLayoutEffect(() => {
+  // https://kentcdodds.com/blog/useeffect-vs-uselayouteffect#one-special-case
+    latestCallbackRef = callback
+  })
+
+  React.useEffect(() => {
+    latestCallbackRef()
+  }, []) // <-- don't have to include the callback in the dep array
+}
+```
 
 ## Context Module Functions
 - SoC and enhancing reusability, more details [at 02:20](https://epicreact.dev/modules/advanced-react-patterns/context-module-functions-solution).
